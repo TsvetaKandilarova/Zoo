@@ -20,10 +20,20 @@ class TestAnimal(unittest.TestCase):
         self.tiger = Animal(tiger_stats[1], 18, "Pencho", 'male', 19)
         lion_stats = cursor.execute("SELECT * FROM animal_types\
             WHERE species = 'lion'").fetchall()[0]
-        self.lion = (lion_stats[1], 24, "Svetla", "female", 17)
+        self.lion = Animal(lion_stats[1], 24, "Svetla", "female", 17)
 
-    def test_somthing(self):
-        pass
+    def test_get_name(self):
+        self.assertEqual("Pencho", self.tiger.get_name())
+        self.assertEqual("Svetla", self.lion.get_name())
+
+    def test_get_gender(self):
+        self.assertEqual("female", self.lion.get_gender())
+        self.assertEqual("male", self.tiger.get_gender())
+
+    def test_get_weight(self):
+        self.assertEqual(19, self.tiger.get_weight())
+        self.assertEqual(17, self.lion.get_weight())
+
 
     def tearDown(self):
         self.conn.close()

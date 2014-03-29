@@ -13,10 +13,17 @@ class TestAnimal(unittest.TestCase):
         cursor = self.conn.cursor()
         create_tables(cursor)
         self.conn.commit()
+        tiger_stats = cursor.execute("SELECT * FROM animal_types\
+         WHERE species = 'tiger'").fetchall()[0]
+        # print(tiger_stats)
+        # print(tiger_stats[1])
+        self.tiger = Animal(tiger_stats[1], 18, "Pencho", 'male', 19)
+        lion_stats = cursor.execute("SELECT * FROM animal_types\
+            WHERE species = 'lion'").fetchall()[0]
+        self.lion = (lion_stats[1], 24, "Svetla", "female", 17)
 
     def test_somthing(self):
         pass
-
 
     def tearDown(self):
         self.conn.close()

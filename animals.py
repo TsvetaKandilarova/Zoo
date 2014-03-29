@@ -20,8 +20,9 @@ class Animal():
     def get_weight(self):
         return self.weight
 
-    def update_weight(self, period)
-=======
+    def update_weight(self, period):
+        pass
+
     def get_species(self):
         return self.species
 

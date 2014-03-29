@@ -43,6 +43,10 @@ class TestAnimal(unittest.TestCase):
         self.assertEqual(18, self.tiger.get_age())
         self.assertEqual(24, self.lion.get_age())
 
+    def test_update_weight(self):
+        self.assertEqual(31, self.tiger.update_weight(30))
+        self.assertEqual(24.5, self.lion.update_weight(30))
+
     def tearDown(self):
         self.conn.close()
         call('rm animal_types.db', shell=True)

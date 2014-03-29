@@ -22,6 +22,7 @@ class TestAnimal(unittest.TestCase):
             WHERE species = 'lion'").fetchall()[0]
         self.lion = Animal(lion_stats[1], 24, "Svetla", "female", 17)
 
+
     def test_get_name(self):
         self.assertEqual("Pencho", self.tiger.get_name())
         self.assertEqual("Svetla", self.lion.get_name())
@@ -34,6 +35,13 @@ class TestAnimal(unittest.TestCase):
         self.assertEqual(19, self.tiger.get_weight())
         self.assertEqual(17, self.lion.get_weight())
 
+    def test_get_species(self):
+        self.assertEqual("tiger", self.tiger.get_species())
+        self.assertEqual("lion", self.lion.get_species())
+
+    def test_get_age(self):
+        self.assertEqual(18, self.tiger.get_age())
+        self.assertEqual(24, self.lion.get_age())
 
     def tearDown(self):
         self.conn.close()

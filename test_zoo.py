@@ -1,11 +1,12 @@
 import unittest
 from subprocess import call
+from zoo import Zoo
 from animals import Animal
 from create_table import create_tables
 import sqlite3
 
 
-class TestAnimal(unittest.TestCase):
+class TestZoo(unittest.TestCase):
     """docstring for ZooTest"""
 
     def setUp(self):
@@ -14,11 +15,7 @@ class TestAnimal(unittest.TestCase):
         create_tables(cursor)
         self.conn.commit()
 
-    def test_somthing(self):
-        pass
+
     # def tearDown(self):
     #     self.conn.close()
     #     call('rm animal_types.db', shell=True)
-
-if __name__ == '__main__':
-    unittest.main()

@@ -16,9 +16,11 @@ class TestAnimal(unittest.TestCase):
 
     def test_somthing(self):
         pass
-    # def tearDown(self):
-    #     self.conn.close()
-    #     call('rm animal_types.db', shell=True)
+
+
+    def tearDown(self):
+        self.conn.close()
+        call('rm animal_types.db', shell=True)
 
 if __name__ == '__main__':
     unittest.main()

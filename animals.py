@@ -11,6 +11,12 @@ class Animal():
         self.gender = gender
         self.weight = weight
 
+    def get_species(self):
+        return self.species
+
+    def get_age(self):
+        return self.age
+
     def grow(self):
         pass
 

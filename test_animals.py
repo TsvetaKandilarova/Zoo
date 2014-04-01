@@ -46,6 +46,10 @@ class TestAnimal(unittest.TestCase):
         self.assertEqual(250, self.tiger.get_max_weight())
         self.assertEqual(200, self.lion.get_max_weight())
 
+    def test_max_age(self):
+        self.assertEqual(20, self.tiger.get_max_age())
+        self.assertEqual(15, self.lion.get_max_age())
+
     def test_update_weight(self):
         self.assertEqual(31, self.tiger.update_weight(1))
         self.assertEqual(24.5, self.lion.update_weight(1))
@@ -61,6 +65,20 @@ class TestAnimal(unittest.TestCase):
         self.lion.grow(0)
         self.assertEqual(17, self.lion.get_weight())
         self.assertEqual(24, self.lion.get_age())
+
+    # because of the chance_of_dying this test sometimes fails, as it should do
+    # so it is commented
+    """
+    def test_die(self):
+        self.tiger.grow(180)
+        # his new age is 198 months (max is 20 years = 240 months)
+        self.assertEqual(False, self.tiger.die(0))
+
+        self.assertEqual(True, self.tiger.die(22))
+
+        # surely DEAD
+        self.assertEqual(True, self.tiger.die(50))
+    """
 
     def tearDown(self):
         self.conn.close()

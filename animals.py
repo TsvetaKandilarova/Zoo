@@ -1,4 +1,5 @@
 import sqlite3
+from random import randint
 
 
 # the periods of time are in months
@@ -27,6 +28,15 @@ class Animal():
         species = ?"
         max_weight = cursor.execute(query, (self.__species, )).fetchall()[0][0]
         return max_weight
+
+    # max_age is in years
+    def get_max_age(self):
+        self.conn = sqlite3.connect('animals.db')
+        cursor = self.conn.cursor()
+        query = "SELECT life_expectancy FROM animals WHERE \
+        species = ?"
+        max_age = cursor.execute(query, (self.__species, )).fetchall()[0][0]
+        return max_age
 
     def update_weight(self, period):
         self.conn = sqlite3.connect('animals.db')
@@ -57,5 +67,17 @@ class Animal():
     def eat(self):
         pass
 
-    def die(self):
-        pass
+    def die(self, period):
+        new_age = self.get_age() + period
+        life_expectancy = self.get_max_age() * 12
+        chance_of_dying = new_age * 100 / life_expectancy / 2
+        # reducing the chance of dying by 2, because it seems unnatural for a
+        # 10-years old tiger to have a 50% chance of dying :?
+        if(new_age > life_expectancy):
+            self.__age = life_expectancy
+            return True
+        else:
+            self.__age = new_age
+            if(chance_of_dying > randint(1, 100)):
+                return True
+            return False

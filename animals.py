@@ -64,8 +64,8 @@ class Animal():
         new_age = self.get_age() + period
         self.__age = new_age
 
-    def eat(self):
-        pass
+    def feed(self, food_weight_ratio):
+        return food_weight_ratio * self.weight
 
     def die(self, period):
         new_age = self.get_age() + period

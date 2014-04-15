@@ -38,9 +38,7 @@ class TestZoo(unittest.TestCase):
 
     def test_daily_expenses(self):
         self.zoo.accommodate_animal('tiger', 18, "Zyblyo", 'male', 19)
-        a = Animal('tiger', 18, 'Zyblyo', 'male', 19)
-        expected = 19 * 0.035
-        self.assertEqual(expected * 4, self.zoo.daily_expenses())
+        self.assertEqual(19 * 0.06 * 4, self.zoo.daily_expenses())
 
     # def test_generate_name(self):
     #     pass

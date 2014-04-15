@@ -57,18 +57,15 @@ class Zoo():
     def daily_expenses(self):
         money = 0
         for animal in self.__animals:
-            animal_type = self.__database.get_food_type
-            (animal.get_species())
-            ""
-            food_weight_ratio = self.__database.get_food_weight_ratio
-            (animal.get_species())
+            animal_type = self.__database.get_food_type(animal.get_species())
+            food_weight_ratio = self.__database.get_food_weight_ratio(animal.get_species())
             if animal_type == "carnivore":
                 money += 4 * animal.feed(food_weight_ratio)
             else:
                 money += 2 * animal.feed(food_weight_ratio)
         return money
 
-    def random_gender(self):
+    def flip_a_coin(self):
         gender = randint(0, 1)
         if gender == 0:
             gender = 'male'
@@ -86,7 +83,7 @@ class Zoo():
     def born_animal(self, species, name):
         self.__database.set_last_breed(species, name, 0)
         weight = self.__database.get_newborn_weight(species)
-        gender = self.random_gender()
+        gender = self.flip_a_coin()
         name = self.generate_name(species, name, gender)
         new_animal = Animal(species, 1, name, gender, weight)
         self.__animals.append(new_animal)

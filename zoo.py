@@ -87,17 +87,16 @@ class Zoo():
         name = self.generate_name(species, name, gender)
         new_animal = Animal(species, 1, name, gender, weight)
         self.__animals.append(new_animal)
-        self.database.insert_animal(new_animal)
+        self.__database.insert_animal(new_animal)
 
         if len(self.__animals) > self.__capacity:
             return False
         return True
 
-    def will_it_mate(self, species, name):
+    def ready_to_give_birth(self, species, name):
         breeding_period =\
-            __BREEDING_PERIOD + self.database.get_gestation(species)
-        has_male = self.database.has_male(species)
-        ready_to_breed =\
-            breeding_period <= self.database.get_last_breed(species, name)
-
-        return has_male and ready_to_breed
+            6 + self.database.get_gestation(species)
+        if self.database.has_male(species):
+            if breeding_period <= self.database.get_last_breed(species, name):
+                return True
+        return False

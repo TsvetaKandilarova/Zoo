@@ -32,19 +32,25 @@ class TestZoo(unittest.TestCase):
         self.assertEqual(0, len(self.zoo.get_animals()))
 
     def test_daily_incomes(self):
-        self.zoo.accommodate_animal('tiger', 18, "Tsveta", 'male', 19)
-        self.zoo.accommodate_animal('tiger', 18, "Svetla", 'male', 19)
+        self.zoo.accommodate_animal('tiger', 18, "Tsveta", 'female', 19)
+        self.zoo.accommodate_animal('tiger', 18, "Svetla", 'female', 19)
         self.assertEqual(120, self.zoo.daily_incomes())
 
     def test_daily_expenses(self):
         self.zoo.accommodate_animal('tiger', 18, "Zyblyo", 'male', 19)
         self.assertEqual(19 * 0.06 * 4, self.zoo.daily_expenses())
 
-    # def test_generate_name(self):
-    #     pass
+    def test_born_animal(self):
+        self.zoo.accommodate_animal('tiger', 18, "Snejan", 'male', 19)
+        self.zoo.accommodate_animal('tiger', 18, "Spiridonka", 'female', 19)
+        self.zoo.born_animal('tiger', 'Spiridonka')
+        self.assertEqual(3, len(self.zoo.get_animals()))
 
-    # def test_born_animal(self):
-    #     pass
+    def test_ready_to_give_birth(self):
+        self.zoo.accommodate_animal('tiger', 18, "Snejan", 'male', 19)
+        self.zoo.accommodate_animal('tiger', 18, "Spiridonka", 'female', 19)
+        self.zoo.born_animal('tiger', 'Spiridonka')
+        self.assertFalse(self.zoo.born_animal('tiger', 'Spiridonka'))
 
     def tearDown(self):
         call('rm Sofia.db', shell=True)

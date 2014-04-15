@@ -51,7 +51,7 @@ class Database():
         if animal_id is not None:
             c.execute("DELETE FROM zoo WHERE species=? AND name=?\
                 ", (species, name))
-            c.execute("DELETE FROM breeding WHERE id=?", (str(animal_id[0], )))
+            c.execute("DELETE FROM breeding WHERE id=?", (str(animal_id[0]), ))
         self.zoo_conn.commit()
 
     def get_males(self, species):

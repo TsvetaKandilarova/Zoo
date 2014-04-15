@@ -26,6 +26,9 @@ class Zoo():
     def get_animals(self):
         return self.__animals
 
+    def get_database(self):
+        return self.__database
+
     def accommodate_animal(self, species, age, name, gender, weight):
         if self.__capacity <= len(self.__animals):
             return False

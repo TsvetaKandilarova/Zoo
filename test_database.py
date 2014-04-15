@@ -30,6 +30,9 @@ class DatabaseTest(unittest.TestCase):
         self.assertEqual((2, 0), last_breed_from_db)
 
     def test_remove_animal(self):
+        breed_from_db = self.c.execute("SELECT * from breeding").fetchall()
+        self.assertEqual(1, len(breed_from_db))
+
         self.db.remove_animal("lion", "Svetla")
 
         animal_from_db = self.c.execute("SELECT * FROM zoo").fetchall()

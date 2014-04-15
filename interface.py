@@ -11,18 +11,18 @@ __commands = ["see_animals",
               "simulate",
               "exit"
               ]
+# Zoo(name, capacity, budget)
+__zoo = Zoo("Sofia_zoo", 50, 3000)
 __unknown_command_msg = """
 Unknown command!
 
 Try one of the following:
     - see_animals
     - accommodate <species> <age> <name> <gender> <weight>
-    - move_to_habitat
+    - move_to_habitat <species> <name>
     - simulate
     - exit
 """
-# Zoo(name, capacity, budget)
-__zoo = Zoo("Sofia_zoo", 50, 3000)
 
 
 """ if there are already animals in the zoo table -> we should update
@@ -31,8 +31,8 @@ the zoo_class on loading the application"""
 #     db = Database("Sofia_zoo.db")
 
 
-def is_zoo_database(database):
-    zoo_conn = sqlite3.connect(database)
+def is_zoo_database(database_name):
+    zoo_conn = sqlite3.connect(database_name)
     cursor = zoo_conn.cursor()
     animals_from_db = cursor.execute('''SELECT * FROM zoo''').fetchall()
     if animals_from_db == []:
@@ -66,11 +66,10 @@ def fill_with_animals(database):
     db.insert_animal(goat2)
 
 
-def update_from_database(database):
+def update_from_database(database_name):
     zoo = __zoo
     zoo.__animals = []
-    zoo.__database = database
-    conn = sqlite3.connect(database)
+    conn = sqlite3.connect(database_name)
     cursor = conn.cursor()
 
     animals_from_db = cursor.execute('''SELECT * FROM zoo''').fetchall()
@@ -80,8 +79,8 @@ def update_from_database(database):
 
 
 # <name> : <species>, <age>, <weight>
-def see_animals(zoo_class):
-    zoo = zoo_class
+def see_animals():
+    zoo = __zoo
     formated_list = []
 
     # animal_objects look like this: (id, species, age, name, gender, weight)
@@ -95,15 +94,18 @@ def see_animals(zoo_class):
 
 # removes an animal from the zoo and returns it to it's natural habitat
 def move_to_habitat(species, name):
-    pass
+    db = __zoo.get_database()
+    print(db.name)
+    db.remove_animal(species, name)
+    __zoo.remove_animal(species, name)
 
 
 def simulate(interval_of_time, period):
     pass
 
 
-def run_interface(zoo_class):
-    zoo = zoo_class
+def run_interface():
+    __zoo = update_from_database("Sofia_zoo.db")
     while True:
         command = input("Enter command>")
         arguments = command.split()
@@ -112,7 +114,7 @@ def run_interface(zoo_class):
             print(__unknown_command_msg)
 
         if (arguments[0] == "see_animals"):
-            see_animals(zoo_class)
+            see_animals()
 
         if (arguments[0] == "accommodate"):
             species = arguments[1]
@@ -120,17 +122,19 @@ def run_interface(zoo_class):
             name = arguments[3]
             gender = arguments[4]
             weight = arguments[5]
-            adding_animal = zoo.accommodate_animal(species, age, name, gender, weight)
+            adding_animal = __zoo.accommodate_animal(species, age, name, gender, weight)
             if adding_animal is False:
                 print("Not enough space in the zoo")
             else:
                 print(name + " has been accommodated in the zoo.")
-                zoo = update_from_database("Sofia_zoo.db")
+                __zoo = update_from_database("Sofia_zoo.db")
 
         if (arguments[0] == "move_to_habitat"):
             species = arguments[1]
             name = arguments[2]
             move_to_habitat(species, name)
+            print(name + " has been moved to habitat.")
+            __zoo = update_from_database("Sofia_zoo.db")
 
         if (arguments[0] == "simulate"):
             # simulate(interval_of_time, period)
@@ -141,16 +145,14 @@ def run_interface(zoo_class):
 
 
 def main():
-    if is_zoo_database("Sofia_zoo.db"):
-        zoo_class = update_from_database("Sofia_zoo.db")
-        print("Yes, it exists")
-    else:
+    if is_zoo_database("Sofia_zoo.db") is False:
         db = Database("Sofia_zoo.db")
         print("Creating Sofia Zoo")
         fill_with_animals(db)
-        zoo_class = update_from_database("Sofia_zoo.db")
+    else:
+        db = __zoo.get_database()
 
-    run_interface(zoo_class)
+    run_interface()
 
 
 if __name__ == '__main__':

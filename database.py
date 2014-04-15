@@ -34,10 +34,12 @@ class Database():
         gender = animal.get_gender()
         weight = animal.get_weight()
         c = self.zoo_conn.cursor()
-        c.execute("INSERT INTO zoo (species, age, name, gender, weight)\
-            VALUES (?, ?, ?, ?, ?)", (species, age, name, gender, weight))
-        if gender == 'female':
-            self.insert_into_breeding_table(animal)
+        list = c.execute("SELECT name FROM zoo WHERE name = ?", (name,)).fetchall()
+        if len(list) == 0:
+            c.execute("INSERT INTO zoo (species, age, name, gender, weight)\
+                VALUES (?, ?, ?, ?, ?)", (species, age, name, gender, weight))
+            if gender == 'female':
+                self.insert_into_breeding_table(animal)
         self.zoo_conn.commit()
 
     def remove_animal(self, species, name):

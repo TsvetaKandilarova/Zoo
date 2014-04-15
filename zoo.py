@@ -35,6 +35,13 @@ class Zoo():
         self.__database.insert_animal(new_animal)
         return True
 
+    def see_animals(self):
+        list = []
+        for animal in self.__animals:
+            list.append(str(animal))
+        list = '\n'.join(list)
+        return list
+
     def remove_animal(self, species, name):
         for animal in self.__animals:
             if animal.get_species() == species and animal.get_name() == name:
@@ -43,13 +50,6 @@ class Zoo():
 
     def move_animal(self, species, name):
         self.remove_animal(species, name)
-
-    def see_animals(self):
-        list = []
-        for animal in self.__animals:
-            list.append(str(animal))
-        list = '\n'.join(list)
-        return list
 
     def daily_incomes(self):
         return 60 * len(self.__animals)
@@ -63,9 +63,9 @@ class Zoo():
             food_weight_ratio = self.__database.get_food_weight_ratio
             (animal.get_species())
             if animal_type == "carnivore":
-                money += __MEAT_COST * animal.feed(food_weight_ratio)
+                money += 4 * animal.feed(food_weight_ratio)
             else:
-                money += __GRASS_COST * animal.feed(food_weight_ratio)
+                money += 2 * animal.feed(food_weight_ratio)
         return money
 
     def random_gender(self):

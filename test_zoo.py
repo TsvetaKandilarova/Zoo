@@ -17,35 +17,36 @@ class TestZoo(unittest.TestCase):
         self.assertEqual([], self.zoo.get_animals())
 
     def test_accomodate_animal(self):
-        self.zoo.accommodate_animal('tiger', "Zyblyo", 'male', 18, 19)
+        self.zoo.accommodate_animal('tiger', 18, "Zyblyo", 'male', 19)
         self.assertEqual(1, len(self.zoo.get_animals()))
-        self.assertEqual(True, self.zoo.accommodate_animal('tiger\
-            , name, gender, age, weight', "Anastasii", 'male', 18, 19))
+        self.assertEqual(True, self.zoo.accommodate_animal('tiger', 18, "Anastasij", 'male', 19))
 
     def test_remove_animal(self):
-        self.zoo.accommodate_animal('tiger', "Zyblyo", 'male', 18, 19)
-        # Zashto ne bachkash!?
+        self.zoo.accommodate_animal('tiger', 18, "Zyblyo", 'male', 19)
         self.zoo.remove_animal('tiger', 'Zyblyo')
         self.assertEqual(0, len(self.zoo.get_animals()))
 
     def test_move_animal(self):
-        self.zoo.accommodate_animal('tiger', "Zyblyo", 'male', 18, 19)
-        self.zoo.move_animal('tiger', 'Zyblyo')
+        self.zoo.accommodate_animal('tiger', 18, "Spiridon", 'male', 19)
+        self.zoo.move_animal('tiger', 'Spiridon')
         self.assertEqual(0, len(self.zoo.get_animals()))
 
     def test_daily_incomes(self):
-        self.zoo.accommodate_animal('tiger', "Zyblyo", 'male', 18, 19)
-        self.zoo.accommodate_animal('tiger', "Anastasii", 'male', 18, 19)
+        self.zoo.accommodate_animal('tiger', 18, "Tsveta", 'male', 19)
+        self.zoo.accommodate_animal('tiger', 18, "Svetla", 'male', 19)
         self.assertEqual(120, self.zoo.daily_incomes())
 
     def test_daily_expenses(self):
-        pass
+        self.zoo.accommodate_animal('tiger', 18, "Zyblyo", 'male', 19)
+        a = Animal('tiger', 18, 'Zyblyo', 'male', 19)
+        expected = 19 * 0.035
+        self.assertEqual(expected * 4, self.zoo.daily_expenses())
 
-    def test_generate_name(self):
-        pass
+    # def test_generate_name(self):
+    #     pass
 
-    def test_born_animal(self):
-        pass
+    # def test_born_animal(self):
+    #     pass
 
     def tearDown(self):
         call('rm Sofia.db', shell=True)

@@ -1,3 +1,8 @@
+# Database files
+test_interface.db
+zoo.db
+animal_types.db
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

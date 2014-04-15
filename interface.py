@@ -1,25 +1,86 @@
+import os
 from animals import Animal
+from zoo import Zoo
+from database import Database
 import sqlite3
 
 
 #Global arguments
-commands = ["see_animals",
-            "accommodate",
-            "move_to_habitat",
-            "simulate",
-            "finish"
-            ]
+__commands = ["see_animals",
+              "accommodate",
+              "move_to_habitat",
+              "simulate",
+              "exit"
+              ]
+__unknown_command_msg = """
+Unknown command!
+
+Try one of the following:
+    - see_animals
+    - accommodate
+    - move_to_habitat
+    - simulate
+    - exit
+"""
+# Zoo(name, capacity, budget)
+__zoo = Zoo("Sofia", 50, 3000)
 
 
-# UNDER DEVELOPMENT
-# <name> : <species>, <age>, <weight>
-def see_animals(database):
-    animals_listed = []
+""" if there are already animals in the zoo table -> we should update
+the zoo_class on loading the application"""
+# def update_zoo_class(self, zoo_class):
+#     db = Database("zoo.db")
+
+
+def fill_with_animals(database):
+    db = database
+    # Animal(species, age, name, gender, weight)
+    lion1 = Animal("lion", 10, "Svetla", "female", 160)
+    lion2 = Animal("lion", 6, "Gosho", "male", 190)
+    tiger1 = Animal("tiger", 12, "Tsveta", "female", 200)
+    tiger2 = Animal("tiger", 10, "Joro", "male", 230)
+    red_panda1 = Animal("red_panda", 3, "Lubka", "female", 4)
+    red_panda2 = Animal("red_panda", 4, "Lucho", "male", 4.5)
+    hippo1 = Animal("hippo", 22, "Anastasiya", "female", 1200)
+    hippo2 = Animal("hippo", 15, "Zlatin", "male", 1300)
+    goat1 = Animal("goat", 2, "Veska", "female", 40)
+    goat2 = Animal("goat", 4, "Niki", "male", 50)
+    db.insert_animal(lion1)
+    db.insert_animal(lion2)
+    db.insert_animal(tiger1)
+    db.insert_animal(tiger2)
+    db.insert_animal(red_panda1)
+    db.insert_animal(red_panda2)
+    db.insert_animal(hippo1)
+    db.insert_animal(hippo2)
+    db.insert_animal(goat1)
+    db.insert_animal(goat2)
+
+
+def update_from_database(database):
+    zoo = __zoo
+    zoo.__animals = []
     conn = sqlite3.connect(database)
     cursor = conn.cursor()
-    query = "SELECT name, species, age, weight FROM zoo"
-    # animals_listed = cursor.execute(query, ).fetchall()
-    return animals_listed
+
+    animals_from_db = cursor.execute('''SELECT * FROM zoo''').fetchall()
+    for animal in animals_from_db:
+        zoo.__animals.append(animal)
+    return zoo
+
+
+# <name> : <species>, <age>, <weight>
+def see_animals(zoo_class):
+    zoo = zoo_class
+    formated_list = []
+
+    # animal_objects look like this: (id, species, age, name, gender, weight)
+    for animal in zoo.__animals:
+        animal_string = animal[3] + "\t   -   " + animal[1] + ", age: " + str(animal[2]) + " years, weight: " + str(animal[5]) + " kg"
+        formated_list.append(animal_string)
+    output_string = '\n'.join(formated_list)
+    print(output_string)
+    return output_string
 
 
 # adds an animal to the zoo
@@ -36,20 +97,16 @@ def simulate(interval_of_time, period):
     pass
 
 
-def run_interface():
+def run_interface(zoo_class):
     while True:
         command = input("Enter command>")
         arguments = command.split()
-        # the database is test_interface.db
-        database = "test_interface"
 
-        if (arguments[0] not in commands):
-            print("\nUnknown command!\nTry one of the following:\
-                \n\nsee_animals\naccommodate\nmove_to_habitat\
-                \nsimulate")
+        if (arguments[0] not in __commands):
+            print(__unknown_command_msg)
 
         if (arguments[0] == "see_animals"):
-            see_animals(database)
+            see_animals(zoo_class)
 
         if (arguments[0] == "accommodate"):
             # accommodate(species, name, age, weight)
@@ -63,12 +120,19 @@ def run_interface():
             # simulate(interval_of_time, period)
             pass
 
-        if (arguments[0] == "finish"):
+        if (arguments[0] == "exit"):
             break
 
 
 def main():
-    run_interface()
+    if os.path.exists("/zoo.db"):
+        zoo_class = update_from_database("zoo.db")
+    else:
+        db = Database("zoo.db")
+        fill_with_animals(db)
+        zoo_class = update_from_database("zoo.db")
+
+    run_interface(zoo_class)
 
 
 if __name__ == '__main__':

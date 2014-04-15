@@ -1,6 +1,5 @@
 from animals import Animal
 from database import Database
-import sqlite3
 from random import randint
 
 __INCOME_PER_ANIMAL = 60

@@ -1,4 +1,3 @@
-import os
 from animals import Animal
 from zoo import Zoo
 from database import Database
@@ -17,19 +16,29 @@ Unknown command!
 
 Try one of the following:
     - see_animals
-    - accommodate
+    - accommodate <species> <age> <name> <gender> <weight>
     - move_to_habitat
     - simulate
     - exit
 """
 # Zoo(name, capacity, budget)
-__zoo = Zoo("Sofia", 50, 3000)
+__zoo = Zoo("Sofia_zoo", 50, 3000)
 
 
 """ if there are already animals in the zoo table -> we should update
 the zoo_class on loading the application"""
 # def update_zoo_class(self, zoo_class):
-#     db = Database("zoo.db")
+#     db = Database("Sofia_zoo.db")
+
+
+def is_zoo_database(database):
+    zoo_conn = sqlite3.connect(database)
+    cursor = zoo_conn.cursor()
+    animals_from_db = cursor.execute('''SELECT * FROM zoo''').fetchall()
+    if animals_from_db == []:
+        return False
+    else:
+        return True
 
 
 def fill_with_animals(database):
@@ -60,6 +69,7 @@ def fill_with_animals(database):
 def update_from_database(database):
     zoo = __zoo
     zoo.__animals = []
+    zoo.__database = database
     conn = sqlite3.connect(database)
     cursor = conn.cursor()
 
@@ -83,11 +93,6 @@ def see_animals(zoo_class):
     return output_string
 
 
-# adds an animal to the zoo
-def accommodate(species, name, age, weight):
-    pass
-
-
 # removes an animal from the zoo and returns it to it's natural habitat
 def move_to_habitat(species, name):
     pass
@@ -98,6 +103,7 @@ def simulate(interval_of_time, period):
 
 
 def run_interface(zoo_class):
+    zoo = zoo_class
     while True:
         command = input("Enter command>")
         arguments = command.split()
@@ -109,12 +115,22 @@ def run_interface(zoo_class):
             see_animals(zoo_class)
 
         if (arguments[0] == "accommodate"):
-            # accommodate(species, name, age, weight)
-            pass
+            species = arguments[1]
+            age = arguments[2]
+            name = arguments[3]
+            gender = arguments[4]
+            weight = arguments[5]
+            adding_animal = zoo.accommodate_animal(species, age, name, gender, weight)
+            if adding_animal is False:
+                print("Not enough space in the zoo")
+            else:
+                print(name + " has been accommodated in the zoo.")
+                zoo = update_from_database("Sofia_zoo.db")
 
         if (arguments[0] == "move_to_habitat"):
-            # move_to_habitat(species, name)
-            pass
+            species = arguments[1]
+            name = arguments[2]
+            move_to_habitat(species, name)
 
         if (arguments[0] == "simulate"):
             # simulate(interval_of_time, period)
@@ -125,12 +141,14 @@ def run_interface(zoo_class):
 
 
 def main():
-    if os.path.exists("/zoo.db"):
-        zoo_class = update_from_database("zoo.db")
+    if is_zoo_database("Sofia_zoo.db"):
+        zoo_class = update_from_database("Sofia_zoo.db")
+        print("Yes, it exists")
     else:
-        db = Database("zoo.db")
+        db = Database("Sofia_zoo.db")
+        print("Creating Sofia Zoo")
         fill_with_animals(db)
-        zoo_class = update_from_database("zoo.db")
+        zoo_class = update_from_database("Sofia_zoo.db")
 
     run_interface(zoo_class)
 

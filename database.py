@@ -21,8 +21,10 @@ class Database():
         self.zoo_conn.commit()
 
     def insert_into_breeding_table(self, animal):
+        name = animal.get_name()
+        species = animal.get_species()
         c = self.zoo_conn.cursor()
-        id = c.execute("SELECT id from zoo").fetchall()[0]
+        id = c.execute("SELECT id from zoo WHERE name = ? AND species = ?", (name, species)).fetchall()[0]
         id = id[0]
         c.execute("INSERT INTO breeding VALUES(?, ?)", (id, 0))
         self.zoo_conn.commit()

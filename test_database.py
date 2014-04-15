@@ -19,6 +19,16 @@ class DatabaseTest(unittest.TestCase):
                         FROM breeding''').fetchall()[0]
         self.assertEqual((1, 0), last_breed_from_db)
 
+    def test_insert_second_animal(self):
+        self.a2 = Animal("tiger", 24, "Tsveta", "female", 120)
+        self.db.insert_animal(self.a2)
+        animal_from_db = self.c.execute('''SELECT * FROM zoo''').fetchall()[1]
+        self.assertEqual((2, "tiger", 24, "Tsveta", "female", 120),
+            animal_from_db)
+        last_breed_from_db = self.c.execute('''SELECT id, last_breed
+                        FROM breeding''').fetchall()[1]
+        self.assertEqual((2, 0), last_breed_from_db)
+
     def test_remove_animal(self):
         self.db.remove_animal("lion", "Svetla")
 

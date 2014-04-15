@@ -100,8 +100,35 @@ def move_to_habitat(species, name):
     __zoo.remove_animal(species, name)
 
 
-def simulate(interval_of_time, period):
+def grow_all_animals(time_months):
     pass
+
+
+def check_dead_animals(time_months):
+    pass
+
+
+def check_budget(time_months):
+    pass
+
+
+def check_born_animals(time_months):
+    pass
+
+
+# period id in months only for now!!!
+def simulate(interval_of_time, period):
+    if interval_of_time == "months":
+        time_months = period
+    elif interval_of_time == "weeks":
+        time_months = period / 4
+    elif interval_of_time == "days":
+        time_months = period / 30
+
+    grow_all_animals(time_months)
+    check_dead_animals(time_months)
+    check_budget(time_months)
+    check_born_animals(time_months)
 
 
 def run_interface():
@@ -149,8 +176,6 @@ def main():
         db = Database("Sofia_zoo.db")
         print("Creating Sofia Zoo")
         fill_with_animals(db)
-    else:
-        db = __zoo.get_database()
 
     run_interface()
 

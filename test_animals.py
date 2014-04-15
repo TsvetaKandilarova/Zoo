@@ -81,8 +81,11 @@ class TestAnimal(unittest.TestCase):
     """
 
     def tearDown(self):
-        self.conn.close()
-        call('rm animal_types.db', shell=True)
+        conn = sqlite3.connect("animal_types.db")
+        cursor = conn.cursor()
+        drop_query = "DROP TABLE IF EXISTS animal_types"
+        cursor.execute(drop_query)
+
 
 if __name__ == '__main__':
     unittest.main()

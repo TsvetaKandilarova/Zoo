@@ -7,43 +7,40 @@ from subprocess import call
 class DatabaseTest(unittest.TestCase):
     def setUp(self):
         self.db = Database("test_zoo.db")
-        self.a = Animal("lion", 24, "niya", "female", 150)
+        self.a = Animal("lion", 24, "Svetla", "female", 150)
         self.db.insert_animal(self.a)
         self.c = self.db.zoo_conn.cursor()
 
-    def test_database_init(self):
-        self.assertEqual("test_zoo.db", self.db.name)
-
     def test_insert_animal(self):
-        animal_from_db = self.c.execute('''select * from zoo''').fetchall()[0]
-        self.assertEqual((1, "lion", 24, "niya", "female", 150),
+        animal_from_db = self.c.execute('''SELECT * FROM zoo''').fetchall()[0]
+        self.assertEqual((1, "lion", 24, "Svetla", "female", 150),
             animal_from_db)
-        last_breed_from_db = self.c.execute('''select id, last_breed
-                        from breeding''').fetchall()[0]
+        last_breed_from_db = self.c.execute('''SELECT id, last_breed
+                        FROM breeding''').fetchall()[0]
         self.assertEqual((1, 0), last_breed_from_db)
 
     def test_remove_animal(self):
-        self.db.remove_animal("lion", "niya")
+        self.db.remove_animal("lion", "Svetla")
 
-        animal_from_db = self.c.execute("select * from zoo").fetchall()
+        animal_from_db = self.c.execute("SELECT * FROM zoo").fetchall()
         self.assertEqual(0, len(animal_from_db))
 
-        breed_from_db = self.c.execute("select * from breeding").fetchall()
+        breed_from_db = self.c.execute("SELECT * from breeding").fetchall()
         self.assertEqual(0, len(breed_from_db))
 
     def test_get_males_with_no_males(self):
         self.assertEqual(0, len(self.db.get_males("lion")))
 
     def test_get_males_with_one_male(self):
-        a2 = Animal("lion", 24, "sharik", "male", 150)
+        a2 = Animal("lion", 24, "Pencho", "male", 150)
         self.db.insert_animal(a2)
-        self.assertEqual([("sharik", )], self.db.get_males("lion"))
+        self.assertEqual([("Pencho", )], self.db.get_males("lion"))
 
     def test_has_a_male_species(self):
         self.assertFalse(self.db.has_a_male_species("lion"))
 
     def test_get_females(self):
-        self.assertEqual([("lion", "niya")], self.db.get_females())
+        self.assertEqual([("lion", "Svetla")], self.db.get_females())
 
     def test_get_life_expectancy(self):
         self.assertEqual(15, self.db.get_life_expectancy("lion"))
@@ -67,11 +64,11 @@ class DatabaseTest(unittest.TestCase):
         self.assertEqual(0.035, self.db.get_food_weight_ratio("lion"))
 
     def test_get_last_breed(self):
-        self.assertEqual(0, self.db.get_last_breed("lion", "niya"))
+        self.assertEqual(0, self.db.get_last_breed("lion", "Svetla"))
 
     def test_set_last_breed(self):
-        self.db.set_last_breed("lion", "niya", 3)
-        result = self.db.get_last_breed("lion", "niya")
+        self.db.set_last_breed("lion", "Svetla", 3)
+        result = self.db.get_last_breed("lion", "Svetla")
         self.assertEqual(result, 3)
 
     def tearDown(self):

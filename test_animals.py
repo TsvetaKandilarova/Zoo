@@ -1,5 +1,4 @@
 import unittest
-from subprocess import call
 from animals import Animal
 from create_table import create_tables
 import sqlite3
@@ -58,8 +57,8 @@ class TestAnimal(unittest.TestCase):
         self.assertEqual(200, self.lion.update_weight(100))
 
     def test_grow(self):
-        self.tiger.grow(1)
-        self.assertEqual(31, self.tiger.get_weight())
+        self.tiger.grow(12)
+        self.assertEqual(163, self.tiger.get_weight())
         self.assertEqual(19, self.tiger.get_age())
 
         self.lion.grow(0)

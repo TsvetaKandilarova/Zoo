@@ -88,7 +88,6 @@ def see_animals():
         animal_string = animal[3] + "\t   -   " + animal[1] + ", age: " + str(animal[2]) + " years, weight: " + str(animal[5]) + " kg"
         formated_list.append(animal_string)
     output_string = '\n'.join(formated_list)
-    print(output_string)
     return output_string
 
 
@@ -100,19 +99,51 @@ def move_to_habitat(species, name):
     __zoo.remove_animal(species, name)
 
 
+# grow in weight, age, update table, update
 def grow_all_animals(time_months):
-    pass
+    __zoo = update_from_database("Sofia_zoo.db")
+    zoo = __zoo
+    db = __zoo.get_database()
+
+    for this_animal in zoo.__animals:
+        animal = Animal(this_animal[1], this_animal[2], this_animal[3], this_animal[4], this_animal[5])
+        animal.grow(time_months)
+
+        species = animal.get_species()
+        name = animal.get_name()
+        new_age = animal.get_age()
+        new_weight = animal.get_weight()
+
+        db.set_age(species, name, new_age)
+        db.set_weight(species, name, new_weight)
 
 
 def check_dead_animals(time_months):
-    pass
+    __zoo = update_from_database("Sofia_zoo.db")
+    zoo = __zoo
+    db = __zoo.get_database()
+    dead_list = []
+
+    for this_animal in zoo.__animals:
+        animal = Animal(this_animal[1], this_animal[2], this_animal[3], this_animal[4], this_animal[5])
+        if animal.die(0) is True:
+            dead_list.append(animal)
+
+            species = animal.get_species()
+            name = animal.get_name()
+            db.remove_animal(species, name)
+    return dead_list
 
 
 def check_budget(time_months):
+    # __zoo = update_from_database("Sofia_zoo.db")
+    # return __zoo
     pass
 
 
 def check_born_animals(time_months):
+    # __zoo = update_from_database("Sofia_zoo.db")
+    # return __zoo
     pass
 
 
@@ -126,9 +157,13 @@ def simulate(interval_of_time, period):
         time_months = period / 30
 
     grow_all_animals(time_months)
-    check_dead_animals(time_months)
+    dead_list = check_dead_animals(time_months)
     check_budget(time_months)
     check_born_animals(time_months)
+
+    __zoo = update_from_database("Sofia_zoo.db")
+    print(see_animals())
+    print(dead_list)
 
 
 def run_interface():
@@ -141,7 +176,7 @@ def run_interface():
             print(__unknown_command_msg)
 
         if (arguments[0] == "see_animals"):
-            see_animals()
+            print(see_animals())
 
         if (arguments[0] == "accommodate"):
             species = arguments[1]
@@ -163,7 +198,10 @@ def run_interface():
             print(name + " has been moved to habitat.")
             __zoo = update_from_database("Sofia_zoo.db")
 
+        # gives an error in simulate !!!
         if (arguments[0] == "simulate"):
+            # interval_of_time = arguments[1]
+            # period = int(arguments[2])
             # simulate(interval_of_time, period)
             pass
 

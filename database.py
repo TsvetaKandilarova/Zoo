@@ -13,7 +13,7 @@ class Database():
     def create_tables(self):
         c = self.zoo_conn.cursor()
         c.execute('''create table if not exists zoo
-            (id integer primary key, species text, age int,
+            (id integer primary key, species text, age float,
                 name text, gender text, weight real)''')
         c.execute('''create table if not exists breeding
             (id int, last_breed int,
@@ -121,3 +121,13 @@ class Database():
         id = c.execute(query, (species, name)).fetchone()[0]
         update_query = "UPDATE breeding SET last_breed=? WHERE id=?"
         c.execute(update_query, (last_breed, id))
+
+    def set_age(self, species, name, new_age):
+        c = self.zoo_conn.cursor()
+        update_query = "UPDATE zoo SET age = ? WHERE name = ? AND species = ?"
+        c.execute(update_query, (new_age, name, species))
+
+    def set_weight(self, species, name, new_weight):
+        c = self.zoo_conn.cursor()
+        update_query = "UPDATE zoo SET weight=? WHERE name=? AND species=?"
+        c.execute(update_query, (new_weight, name, species))

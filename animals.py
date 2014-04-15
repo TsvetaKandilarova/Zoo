@@ -43,8 +43,9 @@ class Animal():
         cursor = self.conn.cursor()
         query = "SELECT weight_age_ratio FROM animals WHERE \
         species = ?"
-        result = cursor.execute(query, (self.__species, )).fetchall()[0][0]
-        new_weight = self.get_weight() + result * period
+        result = cursor.execute(query, (self.__species, )).fetchall()
+        # print(result)
+        new_weight = self.get_weight() + result[0][0] * period
         max_weight = self.get_max_weight()
         if(new_weight > max_weight):
             self.__weight = max_weight
@@ -61,14 +62,14 @@ class Animal():
 
     def grow(self, period):
         self.update_weight(period)
-        new_age = self.get_age() + period
+        new_age = (self.get_age() * 12 + period) / 12
         self.__age = new_age
 
     def feed(self, food_weight_ratio):
         return (food_weight_ratio * self.get_weight())
 
     def die(self, period):
-        new_age = self.get_age() + period
+        new_age = self.get_age() * 12 + period
         life_expectancy = self.get_max_age() * 12
         chance_of_dying = new_age * 100 / life_expectancy / 2
         # reducing the chance of dying by 2, because it seems unnatural for a
@@ -77,7 +78,7 @@ class Animal():
             self.__age = life_expectancy
             return True
         else:
-            self.__age = new_age
+            self.__age = new_age / 12
             if(chance_of_dying > randint(1, 100)):
                 return True
             return False

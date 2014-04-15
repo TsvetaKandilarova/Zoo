@@ -84,6 +84,18 @@ class DatabaseTest(unittest.TestCase):
         result = self.db.get_last_breed("lion", "Svetla")
         self.assertEqual(result, 3)
 
+    def test_set_age(self):
+        self.db.set_age("lion", "Svetla", 30)
+        query = "SELECT age FROM zoo WHERE species = ? AND name = ?"
+        result = self.c.execute(query, ("lion", "Svetla")).fetchall()
+        self.assertEqual(30, result[0][0])
+
+    def test_set_weight(self):
+        self.db.set_weight("lion", "Svetla", 195)
+        query = "SELECT weight FROM zoo WHERE species = ? AND name = ?"
+        result = self.c.execute(query, ("lion", "Svetla")).fetchall()
+        self.assertEqual(195, result[0][0])
+
     def tearDown(self):
         call("rm {}".format(self.db.name), shell=True)
 

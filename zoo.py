@@ -1,6 +1,7 @@
 from animals import Animal
 from database import Database
 from random import randint
+import sqlite3
 
 __INCOME_PER_ANIMAL = 60
 __MEAT_COST = 4
@@ -37,12 +38,21 @@ class Zoo():
         self.__database.insert_animal(new_animal)
         return True
 
+    # <name> : <species>, <age>, <weight>
     def see_animals(self):
-        list = []
+        formated_list = []
+        # animal_objects look like this: (id,species,age,name,gender,weight)
         for animal in self.__animals:
-            list.append(str(animal))
-        list = '\n'.join(list)
-        return list
+            species = animal.get_species()
+            age = animal.get_age()
+            name = animal.get_name()
+            weight = animal.get_weight()
+
+            animal_string = name + "\t   -   " + species + ", age: " + str(age)
+            animal_string += " years, weight: " + str(weight) + " kg"
+            formated_list.append(animal_string)
+        output_string = '\n'.join(formated_list)
+        return output_string
 
     def remove_animal(self, species, name):
         for animal in self.__animals:
@@ -102,3 +112,22 @@ class Zoo():
             if breeding_period <= self.database.get_last_breed(species, name):
                 return True
         return False
+
+    def update_animals_from_database(self):
+        self.__animals = []
+        db = self.get_database()
+        db_name = db.get_name()
+        conn = sqlite3.connect(db_name)
+        cursor = conn.cursor()
+
+        animals_from_db = cursor.execute('''SELECT * FROM zoo''').fetchall()
+        for animal in animals_from_db:
+            # (1, 'lion', 10.0, 'Svetla', 'female', 160.0)
+            species = animal[1]
+            age = animal[2]
+            name = animal[3]
+            gender = animal[4]
+            weight = animal[5]
+            this_animal = Animal(species, age, name, gender, weight)
+            self.__animals.append(this_animal)
+        return self.__animals

@@ -2,7 +2,6 @@ import unittest
 from subprocess import call
 from zoo import Zoo
 from animals import Animal
-import sqlite3
 
 
 class TestZoo(unittest.TestCase):
@@ -20,6 +19,12 @@ class TestZoo(unittest.TestCase):
         self.zoo.accommodate_animal('tiger', 18, "Zyblyo", 'male', 19)
         self.assertEqual(1, len(self.zoo.get_animals()))
         self.assertEqual(True, self.zoo.accommodate_animal('tiger', 18, "Anastasij", 'male', 19))
+
+    def test_see_animals(self):
+        self.zoo.accommodate_animal('tiger', 18, "Zyblyo", 'male', 19)
+        expected = "Zyblyo\t   -   tiger, age: 18 years, weight: 19 kg"
+        result = self.zoo.see_animals()
+        self.assertEqual(expected, result)
 
     def test_remove_animal(self):
         self.zoo.accommodate_animal('tiger', 18, "Zyblyo", 'male', 19)
@@ -51,6 +56,19 @@ class TestZoo(unittest.TestCase):
         self.zoo.accommodate_animal('tiger', 18, "Spiridonka", 'female', 19)
         self.zoo.born_animal('tiger', 'Spiridonka')
         self.assertFalse(self.zoo.born_animal('tiger', 'Spiridonka'))
+
+    def test_update_animals_from_database(self):
+        self.assertEqual(0, len(self.zoo.get_animals()))
+
+        self.db = self.zoo.get_database()
+        animal1 = Animal("lion", 24, "Svetla", "female", 150)
+        self.db.insert_animal(animal1)
+        self.zoo.__animals = self.zoo.update_animals_from_database()
+
+        self.assertEqual(1, len(self.zoo.get_animals()))
+
+        first_animal = self.zoo.get_animals()[0]
+        self.assertTrue(isinstance(first_animal, Animal))
 
     def tearDown(self):
         call('rm Sofia.db', shell=True)

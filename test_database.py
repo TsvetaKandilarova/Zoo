@@ -11,6 +11,9 @@ class DatabaseTest(unittest.TestCase):
         self.db.insert_animal(self.a)
         self.c = self.db.zoo_conn.cursor()
 
+    def test_get_name(self):
+        self.assertEqual("test_zoo.db", self.db.get_name())
+
     def test_insert_animal(self):
         animal_from_db = self.c.execute('''SELECT * FROM zoo''').fetchall()[0]
         self.assertEqual((1, "lion", 24, "Svetla", "female", 150),
@@ -40,6 +43,16 @@ class DatabaseTest(unittest.TestCase):
 
         breed_from_db = self.c.execute("SELECT * from breeding").fetchall()
         self.assertEqual(0, len(breed_from_db))
+
+    def test_initial_fill_with_animals(self):
+        self.db.remove_animal("lion", "Svetla")
+        self.db.initial_fill_with_animals()
+
+        animals_from_db = self.c.execute("SELECT * FROM zoo").fetchall()
+        self.assertEqual(10, len(animals_from_db))
+
+        breed_from_db = self.c.execute("SELECT * from breeding").fetchall()
+        self.assertEqual(5, len(breed_from_db))
 
     def test_get_males_with_no_males(self):
         self.assertEqual(0, len(self.db.get_males("lion")))

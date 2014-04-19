@@ -1,4 +1,5 @@
 import sqlite3
+from animals import Animal
 from random import randint
 
 
@@ -9,6 +10,9 @@ class Database():
         self.an_conn = sqlite3.connect("animals.db")
         self.zoo_conn = sqlite3.connect(db_name)
         self.create_tables()
+
+    def get_name(self):
+        return self.name
 
     def create_tables(self):
         c = self.zoo_conn.cursor()
@@ -53,6 +57,29 @@ class Database():
                 ", (species, name))
             c.execute("DELETE FROM breeding WHERE id=?", (str(animal_id[0]), ))
         self.zoo_conn.commit()
+
+    def initial_fill_with_animals(self):
+        # Animal(species, age, name, gender, weight)
+        lion1 = Animal("lion", 10, "Svetla", "female", 160)
+        lion2 = Animal("lion", 6, "Gosho", "male", 190)
+        tiger1 = Animal("tiger", 12, "Tsveta", "female", 200)
+        tiger2 = Animal("tiger", 10, "Joro", "male", 230)
+        red_panda1 = Animal("red panda", 3, "Lubka", "female", 4)
+        red_panda2 = Animal("red panda", 4, "Lucho", "male", 4.5)
+        hippo1 = Animal("hippo", 22, "Anastasiya", "female", 1200)
+        hippo2 = Animal("hippo", 15, "Zlatin", "male", 1300)
+        goat1 = Animal("goat", 2, "Veska", "female", 40)
+        goat2 = Animal("goat", 4, "Niki", "male", 50)
+        self.insert_animal(lion1)
+        self.insert_animal(lion2)
+        self.insert_animal(tiger1)
+        self.insert_animal(tiger2)
+        self.insert_animal(red_panda1)
+        self.insert_animal(red_panda2)
+        self.insert_animal(hippo1)
+        self.insert_animal(hippo2)
+        self.insert_animal(goat1)
+        self.insert_animal(goat2)
 
     def get_males(self, species):
         c = self.zoo_conn.cursor()

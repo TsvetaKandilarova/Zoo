@@ -11,8 +11,6 @@ __commands = ["see_animals",
               "simulate",
               "exit"
               ]
-# Zoo(name, capacity, budget)
-__zoo = Zoo("Sofia_zoo", 50, 3000)
 __unknown_command_msg = """
 Unknown command!
 
@@ -41,70 +39,23 @@ def is_zoo_database(database_name):
         return True
 
 
-def fill_with_animals(database):
-    db = database
-    # Animal(species, age, name, gender, weight)
-    lion1 = Animal("lion", 10, "Svetla", "female", 160)
-    lion2 = Animal("lion", 6, "Gosho", "male", 190)
-    tiger1 = Animal("tiger", 12, "Tsveta", "female", 200)
-    tiger2 = Animal("tiger", 10, "Joro", "male", 230)
-    red_panda1 = Animal("red panda", 3, "Lubka", "female", 4)
-    red_panda2 = Animal("red panda", 4, "Lucho", "male", 4.5)
-    hippo1 = Animal("hippo", 22, "Anastasiya", "female", 1200)
-    hippo2 = Animal("hippo", 15, "Zlatin", "male", 1300)
-    goat1 = Animal("goat", 2, "Veska", "female", 40)
-    goat2 = Animal("goat", 4, "Niki", "male", 50)
-    db.insert_animal(lion1)
-    db.insert_animal(lion2)
-    db.insert_animal(tiger1)
-    db.insert_animal(tiger2)
-    db.insert_animal(red_panda1)
-    db.insert_animal(red_panda2)
-    db.insert_animal(hippo1)
-    db.insert_animal(hippo2)
-    db.insert_animal(goat1)
-    db.insert_animal(goat2)
-
-
-def update_from_database(database_name):
-    zoo = __zoo
-    zoo.__animals = []
-    conn = sqlite3.connect(database_name)
-    cursor = conn.cursor()
-
-    animals_from_db = cursor.execute('''SELECT * FROM zoo''').fetchall()
-    for animal in animals_from_db:
-        zoo.__animals.append(animal)
-    return zoo
-
-
-# <name> : <species>, <age>, <weight>
-def see_animals():
-    zoo = __zoo
-    print(zoo.__animals)
-    formated_list = []
-
-    # animal_objects look like this: (id, species, age, name, gender, weight)
-    for animal in zoo.__animals:
-        animal_string = animal[3] + "\t   -   " + animal[1] + ", age: " + str(animal[2]) + " years, weight: " + str(animal[5]) + " kg"
-        formated_list.append(animal_string)
-    output_string = '\n'.join(formated_list)
-    return output_string
+def handle_see_animals_command(zoo):
+    output = zoo.see_animals()
+    print(output)
 
 
 # removes an animal from the zoo and returns it to it's natural habitat
-def move_to_habitat(species, name):
-    db = __zoo.get_database()
-    print(db.name)
+def handle_move_to_habitat_command(species, name, zoo):
+    db = zoo.get_database()
     db.remove_animal(species, name)
-    __zoo.remove_animal(species, name)
+    print(name + " has been moved to habitat.")
+    zoo.remove_animal(species, name)
 
 
 # grow in weight, age, update table, update
-def grow_all_animals(time_months):
-    __zoo = update_from_database("Sofia_zoo.db")
-    zoo = __zoo
-    db = __zoo.get_database()
+def grow_all_animals(time_months, zoo):
+    zoo.__animals = zoo.update_animals_from_database()
+    db = zoo.get_database()
 
     for this_animal in zoo.__animals:
         animal = Animal(this_animal[1], this_animal[2], this_animal[3], this_animal[4], this_animal[5])
@@ -122,10 +73,9 @@ def grow_all_animals(time_months):
         db.set_weight(species, name, new_weight)
 
 
-def check_dead_animals(time_months):
-    __zoo = update_from_database("Sofia_zoo.db")
-    zoo = __zoo
-    db = __zoo.get_database()
+def check_dead_animals(time_months, zoo):
+    zoo.__animals = zoo.update_animals_from_database()
+    db = zoo.get_database()
     dead_list = []
 
     for this_animal in zoo.__animals:
@@ -140,18 +90,14 @@ def check_dead_animals(time_months):
 
 
 def check_budget(time_months):
-    # __zoo = update_from_database("Sofia_zoo.db")
-    # return __zoo
     pass
 
 
 def check_born_animals(time_months):
-    # __zoo = update_from_database("Sofia_zoo.db")
-    # return __zoo
     pass
 
 
-def accommodate(arguments):
+def handle_accommodate_command(arguments, zoo):
     species = arguments[1]
     if species == "red":
         species += " " + arguments[2]
@@ -165,7 +111,7 @@ def accommodate(arguments):
         gender = arguments[4]
         weight = arguments[5]
 
-    adding_animal = __zoo.accommodate_animal(species, age, name, gender, weight)
+    adding_animal = zoo.accommodate_animal(species, age, name, gender, weight)
     if adding_animal is False:
         print("Not enough space in the zoo")
     else:
@@ -173,7 +119,7 @@ def accommodate(arguments):
 
 
 # period id in months only for now!!!
-def simulate(interval_of_time, period):
+def handle_simulate_command(interval_of_time, period, zoo):
     if interval_of_time == "months":
         time_months = period
     elif interval_of_time == "weeks":
@@ -181,18 +127,18 @@ def simulate(interval_of_time, period):
     elif interval_of_time == "days":
         time_months = period / 30
 
-    grow_all_animals(time_months)
-    dead_list = check_dead_animals(time_months)
+    grow_all_animals(time_months, zoo)
+    dead_list = check_dead_animals(time_months, zoo)
     check_budget(time_months)
     check_born_animals(time_months)
 
-    __zoo = update_from_database("Sofia_zoo.db")
-    print(see_animals())
+    zoo.__animals = zoo.update_animals_from_database()
+    print(zoo.see_animals())
     print(dead_list)
 
 
-def run_interface():
-    __zoo = update_from_database("Sofia_zoo.db")
+def run_interface(zoo):
+    zoo.__animals = zoo.update_animals_from_database()
     while True:
         command = input("Enter command>")
         arguments = command.split()
@@ -201,11 +147,10 @@ def run_interface():
             print(__unknown_command_msg)
 
         if (arguments[0] == "see_animals"):
-            print(see_animals())
+            handle_see_animals_command(zoo)
 
         if (arguments[0] == "accommodate"):
-            accommodate(arguments)
-            __zoo = update_from_database("Sofia_zoo.db")
+            handle_accommodate_command(arguments, zoo)
 
         if (arguments[0] == "move_to_habitat"):
             species = arguments[1]
@@ -215,27 +160,26 @@ def run_interface():
             else:
                 name = arguments[2]
 
-            move_to_habitat(species, name)
-            print(name + " has been moved to habitat.")
-            __zoo = update_from_database("Sofia_zoo.db")
+            handle_move_to_habitat_command(species, name, zoo)
 
-        # gives an error in simulate !!!
         if (arguments[0] == "simulate"):
             interval_of_time = arguments[1]
             period = int(arguments[2])
-            simulate(interval_of_time, period)
+            handle_simulate_command(interval_of_time, period, zoo)
 
         if (arguments[0] == "exit"):
             break
 
 
 def main():
+    # Zoo(name, capacity, budget)
+    zoo = Zoo("Sofia_zoo", 50, 3000)
     if is_zoo_database("Sofia_zoo.db") is False:
         db = Database("Sofia_zoo.db")
         print("Creating Sofia Zoo")
-        fill_with_animals(db)
+        db.initial_fill_with_animals()
 
-    run_interface()
+    run_interface(zoo)
 
 
 if __name__ == '__main__':

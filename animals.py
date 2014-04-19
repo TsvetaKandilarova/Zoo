@@ -44,7 +44,6 @@ class Animal():
         query = "SELECT weight_age_ratio FROM animals WHERE \
         species = ?"
         result = cursor.execute(query, (self.__species, )).fetchall()
-        # print(result)
         new_weight = self.get_weight() + result[0][0] * period
         max_weight = self.get_max_weight()
         if(new_weight > max_weight):
